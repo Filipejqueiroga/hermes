@@ -41,6 +41,7 @@ public class ProductService {
         existing.setQuantity(product.getQuantity());
 
         return productRepository.save(existing);
+        
     }
 
     public void deleteProduct(Integer id){
