@@ -13,6 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.hermes.hermes.entities.Product;
+import com.hermes.hermes.repositories.ProductRepository;
+import com.hermes.hermes.services.ProductService;
+
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 

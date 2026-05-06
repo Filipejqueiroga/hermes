@@ -1,4 +1,4 @@
-package com.hermes.hermes;
+package com.hermes.hermes.entities;
 
 import java.math.BigDecimal;
 

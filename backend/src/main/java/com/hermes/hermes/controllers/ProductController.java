@@ -1,6 +1,11 @@
-package com.hermes.hermes;
+package com.hermes.hermes.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+import com.hermes.hermes.entities.Product;
+import com.hermes.hermes.services.ProductService;
 
 import java.util.List;
 
@@ -13,7 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-
+@CrossOrigin(origins = "*") 
 @RestController
 @RequestMapping("api/v1/products")
 public class ProductController {

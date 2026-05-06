@@ -1,0 +1,20 @@
+# VS Code
+.vscode/
+
+# Maven
+target/
+*.class
+*.jar
+*.war
+
+# Spring Boot
+*.log
+application-local.properties
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IntelliJ
+.idea/
+*.iml

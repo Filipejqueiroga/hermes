@@ -1,9 +1,12 @@
-package com.hermes.hermes;
+package com.hermes.hermes.services;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
+import com.hermes.hermes.entities.Product;
+import com.hermes.hermes.repositories.ProductRepository;
 
 @Service
 public class ProductService {
