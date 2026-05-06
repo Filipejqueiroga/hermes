@@ -2,6 +2,8 @@ package com.hermes.hermes.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 import com.hermes.hermes.entities.Product;
 import com.hermes.hermes.services.ProductService;
 
