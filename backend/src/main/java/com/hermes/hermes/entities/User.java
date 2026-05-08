@@ -1,81 +1,70 @@
-package main.java.com.hermes.hermes.entities;
+package com.hermes.hermes.entities;
 
-import java.time.LocalDate;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.annotation.processing.Generated;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
+import com.hermes.hermes.enums.Role;
+
+@Getter
+@Setter
 @Entity
-@Table(name = "Users")
-public class User {
+@Table(name = "users")
+public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Columns(nullable = false)
+    @Column(nullable = false)
     private String name;
-    
-    @Columns(nullable = false, unique = true)
+
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Columns(nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.String)
-    @Columns(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
-    @Columns(updatable = false)
+    @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public Long getId() {
-        return id;
+    private boolean enabled;
+
+    @Column(name = "verification_code")
+    private String verificationCode;
+
+    @Column(name = "verification_expiration")
+    private LocalDateTime verificationCodeExpiresAt;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
+    @Override
+    public String getUsername() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    @Override
+    public boolean isAccountNonExpired() { return true; }
 
-    public String getPassword() {
-        return password;
-    }
+    @Override
+    public boolean isAccountNonLocked() { return true; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    
+    @Override
+    public boolean isEnabled() { return enabled; }
 }
-
-
