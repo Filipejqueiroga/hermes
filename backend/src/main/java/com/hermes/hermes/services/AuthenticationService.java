@@ -4,6 +4,7 @@ import com.hermes.hermes.dto.LoginUserDto;
 import com.hermes.hermes.dto.RegisterUserDto;
 import com.hermes.hermes.dto.VerifyUserDto;
 import com.hermes.hermes.entities.User;
+import com.hermes.hermes.enums.Role;
 import com.hermes.hermes.repositories.UserRepository;
 import jakarta.mail.MessagingException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +36,7 @@ public class AuthenticationService {
         user.setName(input.getUsername());
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
+        user.setRole(Role.BUYER);
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(false);

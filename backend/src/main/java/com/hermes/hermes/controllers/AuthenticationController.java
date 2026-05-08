@@ -4,6 +4,7 @@ import com.hermes.hermes.dto.LoginResponse;
 import com.hermes.hermes.dto.LoginUserDto;
 import com.hermes.hermes.dto.RegisterUserDto;
 import com.hermes.hermes.dto.VerifyUserDto;
+import com.hermes.hermes.dto.UserResponseDto;
 import com.hermes.hermes.entities.User;
 import com.hermes.hermes.services.AuthenticationService;
 import com.hermes.hermes.services.JwtService;
@@ -23,9 +24,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<UserResponseDto> register(@RequestBody RegisterUserDto registerUserDto) {
         User registeredUser = authenticationService.signup(registerUserDto);
-        return ResponseEntity.ok(registeredUser);
+        UserResponseDto response = new UserResponseDto(
+            registeredUser.getId(),
+            registeredUser.getName(),
+            registeredUser.getEmail(),
+            registeredUser.getRole(),
+            registeredUser.isEnabled(),
+            registeredUser.getCreatedAt()
+        );
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
