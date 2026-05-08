@@ -1,4 +1,4 @@
-package main.java.com.hermes.hermes.enums;
+package com.hermes.hermes.enums;
 
 public enum Role {
     ADMIN,
