@@ -34,7 +34,7 @@ public class AuthenticationController {
             registeredUser.isEnabled(),
             registeredUser.getCreatedAt()
         );
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(201).body(response);
     }
 
     @PostMapping("/login")
