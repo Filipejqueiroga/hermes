@@ -4,16 +4,17 @@ import com.hermes.hermes.dto.LoginUserDto;
 import com.hermes.hermes.dto.RegisterUserDto;
 import com.hermes.hermes.dto.VerifyUserDto;
 import com.hermes.hermes.entities.User;
-import com.hermes.hermes.enums.Role;
 import com.hermes.hermes.repositories.UserRepository;
 import jakarta.mail.MessagingException;
+import com.hermes.hermes.exceptions.DuplicateEmailException;
+import com.hermes.hermes.exceptions.InvalidCredentialsException;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -32,11 +33,15 @@ public class AuthenticationService {
     }
 
     public User signup(RegisterUserDto input) {
+        if (userRepository.findByEmail(input.getEmail()).isPresent()) {
+            throw new DuplicateEmailException("Email already in use");
+        }
+
         User user = new User();
         user.setName(input.getUsername());
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
-        user.setRole(Role.BUYER);
+        user.setRole(input.getRole());
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(false);
@@ -47,15 +52,19 @@ public class AuthenticationService {
 
     public User authenticate(LoginUserDto input) {
         User user = userRepository.findByEmail(input.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
 
         if (!user.isEnabled()) {
             throw new RuntimeException("Account not verified. Please verify your account.");
         }
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(input.getEmail(), input.getPassword())
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(input.getEmail(), input.getPassword())
+            );
+        } catch (Exception e) {
+            throw new InvalidCredentialsException("Invalid credentials");
+        }
 
         return user;
     }

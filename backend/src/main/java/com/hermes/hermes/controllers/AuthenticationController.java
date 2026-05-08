@@ -4,14 +4,13 @@ import com.hermes.hermes.dto.LoginResponse;
 import com.hermes.hermes.dto.LoginUserDto;
 import com.hermes.hermes.dto.RegisterUserDto;
 import com.hermes.hermes.dto.VerifyUserDto;
-import com.hermes.hermes.dto.UserResponseDto;
 import com.hermes.hermes.entities.User;
 import com.hermes.hermes.services.AuthenticationService;
 import com.hermes.hermes.services.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @RestController
 public class AuthenticationController {
 
@@ -23,16 +22,17 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<UserResponseDto> register(@RequestBody RegisterUserDto registerUserDto) {
+    @PostMapping("/register")
+    public ResponseEntity<LoginResponse> register(@RequestBody RegisterUserDto registerUserDto) {
         User registeredUser = authenticationService.signup(registerUserDto);
-        UserResponseDto response = new UserResponseDto(
+        String jwtToken = jwtService.generateToken(registeredUser);
+        LoginResponse response = new LoginResponse(
+            jwtToken,
+            jwtService.getExpirationTime(),
             registeredUser.getId(),
             registeredUser.getName(),
             registeredUser.getEmail(),
-            registeredUser.getRole(),
-            registeredUser.isEnabled(),
-            registeredUser.getCreatedAt()
+            registeredUser.getRole()
         );
         return ResponseEntity.status(201).body(response);
     }
@@ -41,7 +41,14 @@ public class AuthenticationController {
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
-        LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
+        LoginResponse loginResponse = new LoginResponse(
+            jwtToken,
+            jwtService.getExpirationTime(),
+            authenticatedUser.getId(),
+            authenticatedUser.getName(),
+            authenticatedUser.getEmail(),
+            authenticatedUser.getRole()
+        );
         return ResponseEntity.ok(loginResponse);
     }
 
