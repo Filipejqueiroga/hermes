@@ -41,7 +41,6 @@ public class AuthenticationService {
         user.setName(input.getUsername());
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
-        user.setRole(input.getRole());
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(false);

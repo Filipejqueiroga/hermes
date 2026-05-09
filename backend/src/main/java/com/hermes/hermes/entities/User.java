@@ -29,7 +29,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role role = Role.BUYER;
 
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
