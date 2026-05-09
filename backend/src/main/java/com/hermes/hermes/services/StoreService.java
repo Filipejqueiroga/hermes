@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hermes.hermes.entities.Store;
 import com.hermes.hermes.entities.User;
 import com.hermes.hermes.exceptions.DuplicateStoreException;
+import com.hermes.hermes.exceptions.StoreNotFoundException;
 import com.hermes.hermes.repositories.StoreRepository;
 
 @Service
@@ -48,5 +49,10 @@ public class StoreService {
                 .replaceAll("[^a-z0-9\\s]", "")
                 .trim()
                 .replaceAll("\\s+", "-");
+    }
+
+    public Store getStoreBySeller(User seller) {
+        return storeRepository.findBySeller(seller)
+                .orElseThrow(() -> new StoreNotFoundException("Store not found"));
     }
 }
