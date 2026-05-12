@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes — O Mercado dos Deuses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+
+  <main>
+    <div class="container">
+
+      <section class="hero">
+        <p class="hero-eyebrow">✦ &nbsp; O Mercado dos Deuses &nbsp; ✦</p>
+        <h1>Bem-vindo ao <em>Hermes</em></h1>
+        <p>Onde mortais e deuses trocam os mais preciosos artefatos do Olimpo</p>
+      </section>
+
+      <div class="section-header">
+        <h2>Produtos em Destaque</h2>
+        <span class="count" id="product-count"></span>
+      </div>
+
+      <div class="products-grid" id="products-grid">
+        <div class="loading" style="grid-column: 1 / -1;">Convocando os mercadores...</div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../scripts/api.js"></script>
+  <script src="../scripts/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const grid = document.getElementById('products-grid');
+      const countEl = document.getElementById('product-count');
+
+      try {
+        const products = await api.products.getAll();
+        countEl.textContent = `${products.length} produto${products.length !== 1 ? 's' : ''}`;
+
+        if (!products.length) {
+          grid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <span class="empty-icon">☤</span>
+              <h3>O mercado está silencioso</h3>
+              <p>Nenhum artefato foi trazido pelos mercadores ainda.<br>Crie sua loja e seja o primeiro a negociar.</p>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = products.map(p => `
+          <div class="product-card">
+            <div class="product-image">
+              ${p.imageUrl
+                ? `<img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.name)}" onerror="this.parentElement.innerHTML='<span class=\\'img-placeholder\\'>☤</span>'">`
+                : `<span class="img-placeholder">☤</span>`
+              }
+            </div>
+            <div class="product-body">
+              <div class="product-name">${escapeHtml(p.name)}</div>
+              <div class="product-description">${escapeHtml(p.description || '')}</div>
+              <div class="product-footer">
+                <span class="product-price">R$&nbsp;${parseFloat(p.price).toFixed(2)}</span>
+                <span class="product-qty">${p.quantity} un.</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <span class="empty-icon" style="font-size:2.5rem;">⚡</span>
+            <h3>Os deuses não respondem</h3>
+            <p>${escapeHtml(err.message)}</p>
+          </div>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
