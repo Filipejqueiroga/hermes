@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes — Entrar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+
+  <main class="auth-page">
+    <div class="auth-card">
+
+      <div class="card-logo">
+        <span class="logo-icon">☤</span>
+        <h2>Hermes</h2>
+        <p>Entre no mercado dos deuses</p>
+      </div>
+
+      <div id="form-error" class="alert alert-error" style="display:none; margin-bottom:1.2rem;"></div>
+
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="email" placeholder="seu@email.com" autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <button class="btn btn-gold btn-full" style="margin-top:0.5rem;" onclick="login()">
+        Entrar
+      </button>
+
+      <div class="form-footer">
+        <p>Ainda não tem conta? <a href="register.html">Cadastre-se</a></p>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../scripts/api.js"></script>
+  <script src="../scripts/auth.js"></script>
+  <script>
+    if (auth.isLoggedIn()) {
+      const redirect = sessionStorage.getItem('redirect');
+      sessionStorage.removeItem('redirect');
+      window.location.href = redirect || 'index.html';
+    }
+
+    async function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('form-error');
+
+      errorEl.style.display = 'none';
+
+      if (!email || !password) {
+        errorEl.textContent = 'Preencha e-mail e senha';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      try {
+        const data = await api.auth.login(email, password);
+        auth.save(data);
+        const redirect = sessionStorage.getItem('redirect');
+        sessionStorage.removeItem('redirect');
+        window.location.href = redirect || 'index.html';
+      } catch (err) {
+        errorEl.textContent = err.message || 'E-mail ou senha incorretos';
+        errorEl.style.display = 'block';
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') login();
+    });
+  </script>
+</body>
+</html>
