@@ -74,10 +74,25 @@ a {
 }
 
 .navbar-logo {
-  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
   color: var(--gold);
-  filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.45));
-  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(201, 168, 76, 0.45));
+}
+
+.logo-svg {
+  width: 30px;
+  height: auto;
+  display: block;
+}
+
+.card-logo-svg {
+  width: 48px;
+  height: auto;
+  margin: 0 auto 0.6rem;
+  display: block;
+  color: var(--gold);
+  filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.4));
 }
 
 .navbar-name {
@@ -417,13 +432,6 @@ a {
   margin-bottom: 2rem;
 }
 
-.card-logo .logo-icon {
-  font-size: 2.25rem;
-  color: var(--gold);
-  filter: drop-shadow(0 0 12px rgba(201, 168, 76, 0.4));
-  display: block;
-  margin-bottom: 0.6rem;
-}
 
 .card-logo h2 {
   font-size: 1.5rem;

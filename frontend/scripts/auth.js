@@ -1,3 +1,12 @@
+const _LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 28" fill="currentColor" class="logo-svg" aria-hidden="true">
+  <rect x="5" y="21" width="26" height="4" rx="2"/>
+  <path d="M11 21 L11 13 Q11 9 18 9 Q25 9 25 13 L25 21 Z"/>
+  <path d="M11 19 Q2 15 1 8 Q5 13 10 18 Z"/>
+  <path d="M11 21 Q1 18 0 11 Q4 16 10 20 Z"/>
+  <path d="M25 19 Q34 15 35 8 Q31 13 26 18 Z"/>
+  <path d="M25 21 Q35 18 36 11 Q32 16 26 20 Z"/>
+</svg>`;
+
 const auth = {
   save(data) {
     localStorage.setItem('token', data.token);
@@ -50,7 +59,7 @@ function _buildNavbar() {
     <nav class="navbar">
       <div class="navbar-brand">
         <a href="index.html">
-          <span class="navbar-logo">☤</span>
+          <span class="navbar-logo">${_LOGO_SVG}</span>
           <span class="navbar-name">Hermes</span>
         </a>
       </div>
@@ -65,7 +74,7 @@ function _buildNavbar() {
       <div class="modal-box" style="max-width:420px;">
         <button class="modal-close" onclick="document.getElementById('cart-modal').classList.remove('active')">✕</button>
         <div class="cart-construction">
-          <span class="construction-icon">⚡</span>
+          <span class="construction-icon">🚧</span>
           <h3>Os deuses ainda estão preparando este espaço</h3>
           <p>O Olimpo está em obras. Volte em breve, viajante.</p>
         </div>
