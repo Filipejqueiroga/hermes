@@ -6,49 +6,70 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.hermes.hermes.entities.Product;
+import com.hermes.hermes.entities.Store;
+import com.hermes.hermes.entities.User;
+import com.hermes.hermes.exceptions.ProductNotFoundException;
+import com.hermes.hermes.exceptions.StoreNotFoundException;
 import com.hermes.hermes.repositories.ProductRepository;
+import com.hermes.hermes.repositories.StoreRepository;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final StoreRepository storeRepository;
 
-    public ProductService(ProductRepository productRepository){
+    public ProductService(ProductRepository productRepository, StoreRepository storeRepository) {
         this.productRepository = productRepository;
+        this.storeRepository = storeRepository;
     }
 
-    public List<Product> getAllProducts(){
-        return productRepository.findAll();
+    private Store getStoreByUser(User user) {
+        return storeRepository.findBySeller(user)
+                .orElseThrow(() -> new StoreNotFoundException("Store not found"));
     }
 
-    public Product getProductById(Integer id){
-        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+    public List<Product> getMyProducts(User user) {
+        Store store = getStoreByUser(user);
+        return productRepository.findByStore(store);
     }
 
-    public Product createProduct(Product product){
-        if (product.getQuantity() < 0) {
-            throw new RuntimeException("Quantity can not be negative");
-        }
-        if (product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
-            throw new RuntimeException("Price can not be negative");
-        }
+    public Product createProduct(User user, String name, String description, BigDecimal price, String imageUrl, Integer quantity) {
+        Store store = getStoreByUser(user);
+
+        Product product = new Product();
+        product.setName(name);
+        product.setDescription(description);
+        product.setPrice(price);
+        product.setImageUrl(imageUrl);
+        product.setQuantity(quantity);
+        product.setStore(store);
+
         return productRepository.save(product);
     }
 
-    public Product updateProduct(Product product, Integer id){
-        Product existing = getProductById(id);
+    public Product updateProduct(User user, Long id, String name, String description, BigDecimal price, String imageUrl, Integer quantity) {
+        Store store = getStoreByUser(user);
+        Product existing = productRepository.findByIdAndStore(id, store)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
-        existing.setDescription(product.getDescription());
-        existing.setName(product.getName());
-        existing.setPrice(product.getPrice());
-        existing.setQuantity(product.getQuantity());
+        existing.setName(name);
+        existing.setDescription(description);
+        existing.setPrice(price);
+        existing.setImageUrl(imageUrl);
+        existing.setQuantity(quantity);
 
         return productRepository.save(existing);
-        
     }
 
-    public void deleteProduct(Integer id){
-        getProductById(id); 
-        productRepository.deleteById(id);
+    public void deleteProduct(User user, Long id) {
+        Store store = getStoreByUser(user);
+        Product product = productRepository.findByIdAndStore(id, store)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        productRepository.delete(product);
+    }
+
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 }

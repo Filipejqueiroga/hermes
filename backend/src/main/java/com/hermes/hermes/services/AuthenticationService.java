@@ -43,7 +43,7 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
-        user.setEnabled(false);
+        user.setEnabled(true);
 
         sendVerificationEmail(user);
         return userRepository.save(user);
