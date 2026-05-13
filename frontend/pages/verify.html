@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes — Verificar conta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/main.css">
+  <style>
+    .code-input {
+      letter-spacing: 0.55em;
+      text-align: center;
+      font-size: 1.6rem;
+      font-family: 'Playfair Display', serif;
+      padding: 0.65rem 1rem;
+    }
+
+    .resend-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .resend-row p {
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    .btn-resend {
+      font-size: 0.83rem;
+      color: var(--gold);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+    }
+
+    .btn-resend:hover {
+      text-decoration: underline;
+    }
+
+    .btn-resend:disabled {
+      color: var(--muted);
+      cursor: default;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="auth-page">
+    <div class="auth-card">
+
+      <div class="card-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 28" fill="currentColor" class="logo-svg card-logo-svg" aria-hidden="true">
+          <rect x="5" y="21" width="26" height="4" rx="2"/>
+          <path d="M11 21 L11 13 Q11 9 18 9 Q25 9 25 13 L25 21 Z"/>
+          <path d="M11 19 Q2 15 1 8 Q5 13 10 18 Z"/>
+          <path d="M11 21 Q1 18 0 11 Q4 16 10 20 Z"/>
+          <path d="M25 19 Q34 15 35 8 Q31 13 26 18 Z"/>
+          <path d="M25 21 Q35 18 36 11 Q32 16 26 20 Z"/>
+        </svg>
+        <h2>Verificar conta</h2>
+        <p id="email-hint">Insira o código enviado para o seu e-mail</p>
+      </div>
+
+      <div id="form-error" class="alert alert-error" style="display:none; margin-bottom:1.2rem;"></div>
+      <div id="form-success" class="alert alert-success" style="display:none; margin-bottom:1.2rem;"></div>
+
+      <div class="form-group">
+        <label>Código de verificação</label>
+        <input
+          type="text"
+          id="code"
+          class="code-input"
+          placeholder="000000"
+          maxlength="6"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+        >
+      </div>
+
+      <button class="btn btn-gold btn-full" style="margin-top:0.5rem;" onclick="verify()">
+        Verificar
+      </button>
+
+      <div class="resend-row">
+        <p>Não recebeu?</p>
+        <button class="btn-resend" id="resend-btn" onclick="resendCode()">Reenviar código</button>
+      </div>
+
+      <div class="form-footer">
+        <p><a href="login.html">← Voltar ao login</a></p>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../scripts/api.js"></script>
+  <script src="../scripts/auth.js"></script>
+  <script>
+    const _email = new URLSearchParams(window.location.search).get('email');
+
+    if (!_email) {
+      window.location.href = 'register.html';
+    } else {
+      const hint = document.getElementById('email-hint');
+      hint.textContent = `Insira o código de 6 dígitos enviado para ${_email}`;
+    }
+
+    async function verify() {
+      const code = document.getElementById('code').value.trim();
+      const errorEl = document.getElementById('form-error');
+      const successEl = document.getElementById('form-success');
+
+      errorEl.style.display = 'none';
+      successEl.style.display = 'none';
+
+      if (!code || code.length < 6) {
+        errorEl.textContent = 'Digite o código completo de 6 dígitos';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      try {
+        await api.auth.verify(_email, code);
+        successEl.textContent = 'Conta verificada! Redirecionando para o login...';
+        successEl.style.display = 'block';
+        setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+      } catch (err) {
+        errorEl.textContent = err.message || 'Código inválido ou expirado';
+        errorEl.style.display = 'block';
+      }
+    }
+
+    async function resendCode() {
+      const btn = document.getElementById('resend-btn');
+      const errorEl = document.getElementById('form-error');
+      const successEl = document.getElementById('form-success');
+
+      errorEl.style.display = 'none';
+      successEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+
+      try {
+        await api.auth.resend(_email);
+        successEl.textContent = `Novo código enviado para ${_email}`;
+        successEl.style.display = 'block';
+
+        let seconds = 30;
+        const interval = setInterval(() => {
+          seconds--;
+          btn.textContent = `Reenviar em ${seconds}s`;
+          if (seconds <= 0) {
+            clearInterval(interval);
+            btn.disabled = false;
+            btn.textContent = 'Reenviar código';
+          }
+        }, 1000);
+      } catch (err) {
+        errorEl.textContent = err.message || 'Erro ao reenviar código';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Reenviar código';
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') verify();
+    });
+  </script>
+</body>
+</html>

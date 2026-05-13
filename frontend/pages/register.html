@@ -84,7 +84,7 @@
 
       try {
         await api.auth.register(username, email, password);
-        window.location.href = 'login.html';
+        window.location.href = `verify.html?email=${encodeURIComponent(email)}`;
       } catch (err) {
         errorEl.textContent = err.message || 'Erro ao criar conta';
         errorEl.style.display = 'block';
