@@ -36,6 +36,18 @@ async function _handleResponse(res) {
   return res.json();
 }
 
+// Auth endpoints never redirect on 401 — wrong credentials are a user error, not a session expiry.
+async function _handleAuthResponse(res) {
+  if (!res.ok) {
+    let msg = `Erro ${res.status}`;
+    try { const text = await res.text(); if (text) msg = text; } catch { /* ignore */ }
+    throw new Error(msg);
+  }
+  if (res.status === 204) return null;
+  const ct = res.headers.get('content-type') || '';
+  return ct.includes('application/json') ? res.json() : res.text().then(() => null);
+}
+
 const api = {
   auth: {
     login(email, password) {
@@ -43,7 +55,7 @@ const api = {
         method: 'POST',
         headers: _headers(),
         body: JSON.stringify({ email, password }),
-      }).then(_handleResponse);
+      }).then(_handleAuthResponse);
     },
 
     register(username, email, password) {
@@ -51,7 +63,21 @@ const api = {
         method: 'POST',
         headers: _headers(),
         body: JSON.stringify({ username, email, password }),
-      }).then(_handleResponse);
+      }).then(_handleAuthResponse);
+    },
+
+    verify(email, verificationCode) {
+      return fetch(`${API_BASE}/auth/verify`, {
+        method: 'POST',
+        headers: _headers(),
+        body: JSON.stringify({ email, verificationCode }),
+      }).then(_handleAuthResponse);
+    },
+
+    resend(email) {
+      return fetch(`${API_BASE}/auth/resend?email=${encodeURIComponent(email)}`, {
+        method: 'POST',
+      }).then(_handleAuthResponse);
     },
   },
 
