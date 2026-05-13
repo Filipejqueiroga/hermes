@@ -1,23 +1,34 @@
 spring.application.name=hermes
 
-# Conexão com o banco
+# -------------------------------------------------------
+# DATABASE
+# Keep these values as they match the docker-compose.yml
+# -------------------------------------------------------
 spring.datasource.url=jdbc:postgresql://localhost:5333/hermes
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
-
-# Hibernate
+spring.datasource.username=hermes
+spring.datasource.password=password
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
+# -------------------------------------------------------
 # JWT
-security.jwt.secret-key=sua_chave_base64_aqui
+# Generate a random Base64 key (at least 256 bits)
+# You can generate one at: https://generate-random.org/base64-generator
+# -------------------------------------------------------
+security.jwt.secret-key=YOUR_BASE64_SECRET_KEY_HERE
 security.jwt.expiration-time=3600000
 
-# E-mail
+# -------------------------------------------------------
+# EMAIL (Gmail)
+# 1. Use your Gmail address as username
+# 2. Do NOT use your regular Gmail password
+# 3. Generate an App Password at: https://myaccount.google.com/apppasswords
+#    (Requires 2-factor authentication enabled on your Google account)
+# -------------------------------------------------------
 spring.mail.host=smtp.gmail.com
 spring.mail.port=587
-spring.mail.username=seu_email@gmail.com
-spring.mail.password=sua_senha_de_app_16_digitos
+spring.mail.username=your_email@gmail.com
+spring.mail.password=your_16_digit_app_password
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
