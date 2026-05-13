@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function renderNoStore(content) {
   content.innerHTML = `
     <div class="empty-state">
-      <span class="empty-icon">☤</span>
+      <span class="empty-icon">${_LOGO_SVG}</span>
       <h3>Você ainda não possui um espaço no mercado dos deuses</h3>
       <p>Abra sua loja no Olimpo e comece a negociar com os mortais</p>
       <div class="create-store-form">
@@ -152,9 +152,9 @@ async function loadMyProducts() {
               <tr>
                 <td>
                   ${p.imageUrl
-                    ? `<img src="${escapeHtml(p.imageUrl)}" class="table-image-thumb" alt="${escapeHtml(p.name)}" onerror="this.outerHTML='<div class=\\'table-image-placeholder\\'>☤</div>'">`
-                    : `<div class="table-image-placeholder">☤</div>`
-                  }
+                    ? `<img src="${escapeHtml(p.imageUrl)}" class="table-image-thumb" alt="${escapeHtml(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                    : ''}
+                  <div class="table-image-placeholder" style="${p.imageUrl ? 'display:none' : ''}">${_LOGO_SVG}</div>
                 </td>
                 <td><span class="table-product-name">${escapeHtml(p.name)}</span></td>
                 <td><span class="table-description">${escapeHtml(p.description || '—')}</span></td>

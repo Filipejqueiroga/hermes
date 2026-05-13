@@ -46,7 +46,7 @@
         if (!products.length) {
           grid.innerHTML = `
             <div class="empty-state" style="grid-column: 1 / -1;">
-              <span class="empty-icon">☤</span>
+              <span class="empty-icon">${_LOGO_SVG}</span>
               <h3>O mercado está silencioso</h3>
               <p>Nenhum artefato foi trazido pelos mercadores ainda.<br>Crie sua loja e seja o primeiro a negociar.</p>
             </div>
@@ -57,10 +57,8 @@
         grid.innerHTML = products.map(p => `
           <div class="product-card">
             <div class="product-image">
-              ${p.imageUrl
-                ? `<img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.name)}" onerror="this.parentElement.innerHTML='<span class=\\'img-placeholder\\'>☤</span>'">`
-                : `<span class="img-placeholder">☤</span>`
-              }
+              ${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
+              <span class="img-placeholder" style="${p.imageUrl ? 'display:none' : ''}">${_LOGO_SVG}</span>
             </div>
             <div class="product-body">
               <div class="product-name">${escapeHtml(p.name)}</div>
