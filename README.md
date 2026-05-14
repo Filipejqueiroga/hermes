@@ -22,7 +22,13 @@
 
 ## Quick Start
 
-**Prerequisites:** Java JDK 25, Docker Desktop, Git
+### Prerequisites
+
+- **Java JDK 25** — [Download](https://jdk.java.net/25/)
+- **Docker Desktop** — [Download](https://www.docker.com/products/docker-desktop/)
+- **Git** — [Download](https://git-scm.com/downloads)
+
+### 1. Clone and start the database
 
 ```bash
 git clone https://github.com/seu-usuario/hermes.git
@@ -30,20 +36,34 @@ cd hermes
 docker compose up -d
 ```
 
-Copy the example config file and fill in your credentials:
+### 2. Configure the application
 
-```bash
-cp backend/src/main/resources/application.properties.example backend/src/main/resources/application.properties
+The file `application.properties` contains credentials (JWT secret and email password) and is **not tracked by Git**. Request it from one of the project maintainers and place it at:
+
+```
+backend/src/main/resources/application.properties
 ```
 
-> See the comments inside `application.properties.example` for instructions on each field. The database fields are already filled in and match `docker-compose.yml` — you only need to configure **JWT** and **Email**.
+> ⚠️ **Do not commit this file.** The `.gitignore` already excludes it.
 
-Run the backend:
+### 3. Run the backend
 
 ```bash
 cd backend
-./mvnw spring-boot:run
 ```
+
+```bash
+# macOS / Linux
+./mvnw spring-boot:run
+
+# Windows (CMD)
+mvnw.cmd spring-boot:run
+
+# Windows (PowerShell)
+.\mvnw.cmd spring-boot:run
+```
+
+### 4. Open the frontend
 
 Open `frontend/pages/index.html` in your browser.
 
